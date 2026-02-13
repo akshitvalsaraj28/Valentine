@@ -103,7 +103,7 @@ let yesSize = 1;
 let noCount = 0;
 let player;
 
-// Center buttons
+// Center buttons initially
 function centerButtons() {
   const centerX = window.innerWidth / 2;
   const baseY = window.innerHeight / 2;
@@ -115,25 +115,26 @@ function centerButtons() {
 window.addEventListener('resize', centerButtons);
 centerButtons();
 
-// YouTube API
+// YouTube setup
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '0',
     width: '0',
     videoId: 'fXbfBUNJ9mY',
     playerVars: { 'autoplay': 0, 'controls': 0, 'rel': 0, 'mute': 0 },
-    events: { 'onReady': onPlayerReady }
   });
 }
 
-function onPlayerReady(event) {
-  document.body.onclick = () => {
+// Play music reliably on first click
+function startMusic() {
+  if (player && player.playVideo) {
     player.playVideo();
-  };
+  }
 }
 
 // Yes button click
 yesButton.onclick = function() {
+  startMusic(); // ensure music starts
   confetti({ particleCount: 400, spread: 150, origin: { y: 0.6 } });
   document.body.innerHTML = `
     <h1 style="margin-top:120px;">
@@ -147,13 +148,26 @@ yesButton.onclick = function() {
   `;
 }
 
-// No button hover
+// No button hover with collision prevention
 noButton.onmouseover = function() {
   noCount++;
-  const moveX = (Math.random() * 200) - 100; // smaller range
-  const moveY = (Math.random() * 100) - 50;
-  noButton.style.left = (parseFloat(noButton.style.left) + moveX) + "px";
-  noButton.style.top = (parseFloat(noButton.style.top) + moveY) + "px";
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
+
+  let yesRect = yesButton.getBoundingClientRect();
+  let noRect = noButton.getBoundingClientRect();
+  let newLeft, newTop;
+
+  do {
+    newLeft = Math.random() * (screenW - noRect.width);
+    newTop = Math.random() * (screenH - noRect.height);
+  } while (
+    newLeft < yesRect.right + 20 && newLeft + noRect.width > yesRect.left - 20 &&
+    newTop < yesRect.bottom + 20 && newTop + noRect.height > yesRect.top - 20
+  );
+
+  noButton.style.left = newLeft + "px";
+  noButton.style.top = newTop + "px";
 
   yesSize += 0.1;
   yesButton.style.transform = "rotate(-45deg) scale(" + yesSize + ")";
@@ -174,6 +188,9 @@ setInterval(() => {
   document.body.appendChild(floatItem);
   setTimeout(() => floatItem.remove(), 6000);
 }, 400);
+
+// Start music on first body click
+document.body.addEventListener("click", startMusic, { once: true });
 
 </script>
 
