@@ -30,9 +30,9 @@ button {
   width: 120px;
   height: 110px;
   background-color: #ff4d6d;
-  position: relative;
+  position: absolute;
   transform: rotate(-45deg);
-  margin: 40px;
+  margin: 20px;
 }
 
 .heart-btn:before,
@@ -53,11 +53,6 @@ button {
 .heart-btn:after {
   left: 60px;
   top: 0;
-}
-
-#no {
-  background-color: #555;
-  position: absolute;
 }
 
 .button-text {
@@ -90,7 +85,6 @@ button {
   animation: popRing 1.5s ease-out forwards;
   margin-top: 40px;
 }
-
 @keyframes popRing {
   0% { transform: scale(0); opacity: 0; }
   60% { transform: scale(1.3); opacity: 1; }
@@ -103,17 +97,17 @@ button {
 
 <h1 id="question">Molu 💕<br>Will you be my Valentine?</h1>
 
-<div id="yes" class="heart-btn" onclick="yesClicked()">
+<div id="yes" class="heart-btn">
   <div class="button-text">Yes 💖</div>
 </div>
 
-<div id="no" class="heart-btn" onmouseover="moveButton()">
+<div id="no" class="heart-btn">
   <div class="button-text">No 💔</div>
 </div>
 
 <!-- Hidden YouTube player -->
 <iframe id="ytplayer" width="0" height="0"
-src="https://www.youtube.com/embed/Wa5B22KAkEk?enablejsapi=1"
+src="https://www.youtube.com/embed/fXbfBUNJ9mY?enablejsapi=1"
 frameborder="0" allow="autoplay"></iframe>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -123,6 +117,24 @@ let yesSize = 1;
 let noCount = 0;
 let musicStarted = false;
 
+const yesButton = document.getElementById("yes");
+const noButton = document.getElementById("no");
+const question = document.getElementById("question");
+
+// Center buttons initially
+function centerButtons() {
+  const centerX = window.innerWidth / 2;
+  const baseY = window.innerHeight / 2;
+  yesButton.style.left = (centerX - 160) + "px";
+  yesButton.style.top = (baseY - 60) + "px";
+  noButton.style.left = (centerX + 40) + "px";
+  noButton.style.top = (baseY - 60) + "px";
+}
+
+window.addEventListener('resize', centerButtons);
+centerButtons();
+
+// Start music
 function startMusic() {
   if (!musicStarted) {
     document.getElementById("ytplayer").contentWindow.postMessage(
@@ -131,8 +143,8 @@ function startMusic() {
   }
 }
 
-function yesClicked() {
-
+// Yes button clicked
+yesButton.onclick = function() {
   confetti({
     particleCount: 400,
     spread: 150,
@@ -153,24 +165,21 @@ function yesClicked() {
   `;
 }
 
-function moveButton() {
-
-  let noButton = document.getElementById("no");
-  let yesButton = document.getElementById("yes");
-  let question = document.getElementById("question");
-
+// No button hover/move
+noButton.onmouseover = function() {
   noCount++;
+  const moveX = (Math.random() * 200) - 100; // slower horizontal movement
+  const moveY = (Math.random() * 100) - 50;  // slower vertical movement
+  noButton.style.left = (parseFloat(noButton.style.left) + moveX) + "px";
+  noButton.style.top = (parseFloat(noButton.style.top) + moveY) + "px";
 
-  noButton.style.top = Math.random() * window.innerHeight + "px";
-  noButton.style.left = Math.random() * window.innerWidth + "px";
-
-  yesSize += 0.2;
+  yesSize += 0.1; // slower growth
   yesButton.style.transform = "rotate(-45deg) scale(" + yesSize + ")";
 
   if (noCount == 1) question.innerHTML = "Are you sure Molu? 🥺";
-  if (noCount == 2) question.innerHTML = "Don’t break my heart 😭";
-  if (noCount == 3) question.innerHTML = "The Yes heart is growing stronger 💖";
-  if (noCount > 4) question.innerHTML = "You cannot escape love 💍✨";
+  else if (noCount == 2) question.innerHTML = "Don’t break my heart 😭";
+  else if (noCount == 3) question.innerHTML = "The Yes heart is growing stronger 💖";
+  else if (noCount > 4) question.innerHTML = "You cannot escape love 💍✨";
 }
 
 // Floating hearts & flowers
@@ -184,7 +193,6 @@ setInterval(() => {
 
   setTimeout(() => floatItem.remove(), 6000);
 }, 400);
-
 </script>
 
 </body>
