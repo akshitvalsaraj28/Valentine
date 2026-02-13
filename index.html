@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BBY GIRL M-O-L-U 💖</title>
+
+<style>
+body {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin-top: 100px;
+  background: linear-gradient(to right, #ffdde1, #ee9ca7);
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 40px;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 22px;
+  margin: 15px;
+  cursor: pointer;
+  border-radius: 10px;
+  border: none;
+  transition: 0.3s;
+}
+
+#yes {
+  background-color: #ff4d88;
+  color: white;
+}
+
+#no {
+  background-color: #555;
+  color: white;
+  position: absolute;
+}
+
+/* Floating hearts */
+.heart {
+  position: fixed;
+  bottom: -10px;
+  font-size: 24px;
+  animation: floatUp 5s linear infinite;
+  color: red;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-100vh); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="question">BBY GIRL M-O-L-U 💕<br>Will you be my Valentine?</h1>
+
+<button id="yes" onclick="yesClicked()">Yes BBY 💖</button>
+<button id="no" onmouseover="moveButton()">No 🙄</button>
+
+<audio id="bgMusic" autoplay loop>
+  <source src="https://www.myinstants.com/media/sounds/dandelions.mp3" type="audio/mpeg">
+</audio>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+
+let yesSize = 22;
+let noCount = 0;
+
+// Floating hearts generator
+setInterval(() => {
+  let heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "💖";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+  document.body.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 5000);
+}, 400);
+
+function yesClicked() {
+
+  // Confetti explosion
+  confetti({
+    particleCount: 200,
+    spread: 100,
+    origin: { y: 0.6 }
+  });
+
+  document.body.innerHTML = `
+  <h1 style="margin-top:200px;">
+  YAYYYYY BBY GIRL M-O-L-U 😭❤️<br><br>
+  I knew you loved me 😌💍<br><br>
+  You are stuck with me forever now.
+  </h1>
+  `;
+}
+
+function moveButton() {
+
+  let noButton = document.getElementById("no");
+  let yesButton = document.getElementById("yes");
+  let question = document.getElementById("question");
+
+  noCount++;
+
+  noButton.style.top = Math.random() * window.innerHeight + "px";
+  noButton.style.left = Math.random() * window.innerWidth + "px";
+
+  yesSize += 8;
+  yesButton.style.fontSize = yesSize + "px";
+
+  if (noCount == 1) question.innerHTML = "Are you serious BBY? 🤨";
+  if (noCount == 2) question.innerHTML = "Don't play with me M-O-L-U 😭";
+  if (noCount == 3) question.innerHTML = "This is getting embarrassing for you 🙃";
+  if (noCount == 4) question.innerHTML = "The Yes button is evolving 💪";
+  if (noCount == 5) question.innerHTML = "Just press Yes BBY GIRL 😌💖";
+  if (noCount > 6) question.innerHTML = "You cannot escape destiny 💍✨";
+}
+
+</script>
+
+</body>
+</html>
