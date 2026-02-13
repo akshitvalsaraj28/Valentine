@@ -17,15 +17,6 @@ h1 {
   color: #ff0066;
 }
 
-button {
-  font-size: 22px;
-  padding: 20px;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-/* Heart shaped buttons */
 .heart-btn {
   width: 120px;
   height: 110px;
@@ -33,6 +24,8 @@ button {
   position: absolute;
   transform: rotate(-45deg);
   margin: 20px;
+  cursor: pointer;
+  transition: transform 0.3s;
 }
 
 .heart-btn:before,
@@ -45,15 +38,8 @@ button {
   position: absolute;
 }
 
-.heart-btn:before {
-  top: -60px;
-  left: 0;
-}
-
-.heart-btn:after {
-  left: 60px;
-  top: 0;
-}
+.heart-btn:before { top: -60px; left: 0; }
+.heart-btn:after { left: 60px; top: 0; }
 
 .button-text {
   position: absolute;
@@ -66,7 +52,6 @@ button {
   font-weight: bold;
 }
 
-/* Floating hearts & flowers */
 .floating {
   position: fixed;
   bottom: -20px;
@@ -79,12 +64,12 @@ button {
   100% { transform: translateY(-110vh); opacity: 0; }
 }
 
-/* Ring animation */
 .ring {
   font-size: 100px;
   animation: popRing 1.5s ease-out forwards;
   margin-top: 40px;
 }
+
 @keyframes popRing {
   0% { transform: scale(0); opacity: 0; }
   60% { transform: scale(1.3); opacity: 1; }
@@ -93,7 +78,7 @@ button {
 </style>
 </head>
 
-<body onclick="startMusic()">
+<body>
 
 <h1 id="question">Molu 💕<br>Will you be my Valentine?</h1>
 
@@ -105,23 +90,20 @@ button {
   <div class="button-text">No 💔</div>
 </div>
 
-<!-- Hidden YouTube player -->
-<iframe id="ytplayer" width="0" height="0"
-src="https://www.youtube.com/embed/fXbfBUNJ9mY?enablejsapi=1"
-frameborder="0" allow="autoplay"></iframe>
+<div id="player"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
+let yesButton = document.getElementById("yes");
+let noButton = document.getElementById("no");
+let question = document.getElementById("question");
 let yesSize = 1;
 let noCount = 0;
-let musicStarted = false;
+let player;
 
-const yesButton = document.getElementById("yes");
-const noButton = document.getElementById("no");
-const question = document.getElementById("question");
-
-// Center buttons initially
+// Center buttons
 function centerButtons() {
   const centerX = window.innerWidth / 2;
   const baseY = window.innerHeight / 2;
@@ -130,50 +112,50 @@ function centerButtons() {
   noButton.style.left = (centerX + 40) + "px";
   noButton.style.top = (baseY - 60) + "px";
 }
-
 window.addEventListener('resize', centerButtons);
 centerButtons();
 
-// Start music
-function startMusic() {
-  if (!musicStarted) {
-    document.getElementById("ytplayer").contentWindow.postMessage(
-      '{"event":"command","func":"playVideo","args":""}', '*');
-    musicStarted = true;
-  }
+// YouTube API
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '0',
+    width: '0',
+    videoId: 'fXbfBUNJ9mY',
+    playerVars: { 'autoplay': 0, 'controls': 0, 'rel': 0, 'mute': 0 },
+    events: { 'onReady': onPlayerReady }
+  });
 }
 
-// Yes button clicked
+function onPlayerReady(event) {
+  document.body.onclick = () => {
+    player.playVideo();
+  };
+}
+
+// Yes button click
 yesButton.onclick = function() {
-  confetti({
-    particleCount: 400,
-    spread: 150,
-    origin: { y: 0.6 }
-  });
-
+  confetti({ particleCount: 400, spread: 150, origin: { y: 0.6 } });
   document.body.innerHTML = `
-  <h1 style="margin-top:120px;">
-  HAPPY VALENTINES MOLU 💖🌸<br><br>
-  You are officially my forever Valentine 💍✨
-  </h1>
-
-  <div class="ring">💍</div>
-
-  <h2 style="margin-top:40px; color:#ff0066;">
-  Take a pic and send it to Kuttus 😌💕
-  </h2>
+    <h1 style="margin-top:120px;">
+      HAPPY VALENTINES MOLU 💖🌸<br><br>
+      You are officially my forever Valentine 💍✨
+    </h1>
+    <div class="ring">💍</div>
+    <h2 style="margin-top:40px; color:#ff0066;">
+      Take a pic and send it to Kuttus 😌💕
+    </h2>
   `;
 }
 
-// No button hover/move
+// No button hover
 noButton.onmouseover = function() {
   noCount++;
-  const moveX = (Math.random() * 200) - 100; // slower horizontal movement
-  const moveY = (Math.random() * 100) - 50;  // slower vertical movement
+  const moveX = (Math.random() * 200) - 100; // smaller range
+  const moveY = (Math.random() * 100) - 50;
   noButton.style.left = (parseFloat(noButton.style.left) + moveX) + "px";
   noButton.style.top = (parseFloat(noButton.style.top) + moveY) + "px";
 
-  yesSize += 0.1; // slower growth
+  yesSize += 0.1;
   yesButton.style.transform = "rotate(-45deg) scale(" + yesSize + ")";
 
   if (noCount == 1) question.innerHTML = "Are you sure Molu? 🥺";
@@ -190,9 +172,9 @@ setInterval(() => {
   floatItem.style.left = Math.random() * 100 + "vw";
   floatItem.style.fontSize = (Math.random() * 20 + 20) + "px";
   document.body.appendChild(floatItem);
-
   setTimeout(() => floatItem.remove(), 6000);
 }, 400);
+
 </script>
 
 </body>
