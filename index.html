@@ -1,105 +1,155 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>BBY GIRL M-O-L-U 💖</title>
+<title>Molu 💖 Valentines</title>
 
 <style>
 body {
   text-align: center;
-  font-family: Arial, sans-serif;
+  font-family: 'Comic Sans MS', cursive;
   margin-top: 100px;
-  background: linear-gradient(to right, #ffdde1, #ee9ca7);
+  background: linear-gradient(to right, #ff9a9e, #fad0c4, #fbc2eb);
   overflow: hidden;
 }
 
 h1 {
-  font-size: 40px;
+  font-size: 45px;
+  color: #ff0066;
 }
 
 button {
-  padding: 15px 30px;
   font-size: 22px;
-  margin: 15px;
-  cursor: pointer;
-  border-radius: 10px;
+  padding: 20px;
   border: none;
+  cursor: pointer;
   transition: 0.3s;
 }
 
-#yes {
-  background-color: #ff4d88;
-  color: white;
+/* Heart shaped buttons */
+.heart-btn {
+  width: 120px;
+  height: 110px;
+  background-color: #ff4d6d;
+  position: relative;
+  transform: rotate(-45deg);
+  margin: 40px;
+}
+
+.heart-btn:before,
+.heart-btn:after {
+  content: "";
+  width: 120px;
+  height: 110px;
+  background-color: inherit;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.heart-btn:before {
+  top: -60px;
+  left: 0;
+}
+
+.heart-btn:after {
+  left: 60px;
+  top: 0;
 }
 
 #no {
   background-color: #555;
-  color: white;
   position: absolute;
 }
 
-/* Floating hearts */
-.heart {
+.button-text {
+  position: absolute;
+  transform: rotate(45deg);
+  width: 100%;
+  text-align: center;
+  top: 40px;
+  left: 0;
+  color: white;
+  font-weight: bold;
+}
+
+/* Floating hearts & flowers */
+.floating {
   position: fixed;
-  bottom: -10px;
+  bottom: -20px;
   font-size: 24px;
-  animation: floatUp 5s linear infinite;
-  color: red;
+  animation: floatUp 6s linear infinite;
 }
 
 @keyframes floatUp {
   0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-100vh); opacity: 0; }
+  100% { transform: translateY(-110vh); opacity: 0; }
+}
+
+/* Ring animation */
+.ring {
+  font-size: 100px;
+  animation: popRing 1.5s ease-out forwards;
+  margin-top: 40px;
+}
+
+@keyframes popRing {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1); }
 }
 </style>
 </head>
 
-<body>
+<body onclick="startMusic()">
 
-<h1 id="question">BBY GIRL M-O-L-U 💕<br>Will you be my Valentine?</h1>
+<h1 id="question">Molu 💕<br>Will you be my Valentine?</h1>
 
-<button id="yes" onclick="yesClicked()">Yes BBY 💖</button>
-<button id="no" onmouseover="moveButton()">No 🙄</button>
+<div id="yes" class="heart-btn" onclick="yesClicked()">
+  <div class="button-text">Yes 💖</div>
+</div>
 
-<audio id="bgMusic" autoplay loop>
-  <source src="https://www.myinstants.com/media/sounds/dandelions.mp3" type="audio/mpeg">
-</audio>
+<div id="no" class="heart-btn" onmouseover="moveButton()">
+  <div class="button-text">No 💔</div>
+</div>
+
+<!-- Hidden YouTube player -->
+<iframe id="ytplayer" width="0" height="0"
+src="https://www.youtube.com/embed/Wa5B22KAkEk?enablejsapi=1"
+frameborder="0" allow="autoplay"></iframe>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-
-let yesSize = 22;
+let yesSize = 1;
 let noCount = 0;
+let musicStarted = false;
 
-// Floating hearts generator
-setInterval(() => {
-  let heart = document.createElement("div");
-  heart.className = "heart";
-  heart.innerHTML = "💖";
-  heart.style.left = Math.random() * 100 + "vw";
-  heart.style.fontSize = (Math.random() * 20 + 20) + "px";
-  document.body.appendChild(heart);
-
-  setTimeout(() => {
-    heart.remove();
-  }, 5000);
-}, 400);
+function startMusic() {
+  if (!musicStarted) {
+    document.getElementById("ytplayer").contentWindow.postMessage(
+      '{"event":"command","func":"playVideo","args":""}', '*');
+    musicStarted = true;
+  }
+}
 
 function yesClicked() {
 
-  // Confetti explosion
   confetti({
-    particleCount: 200,
-    spread: 100,
+    particleCount: 400,
+    spread: 150,
     origin: { y: 0.6 }
   });
 
   document.body.innerHTML = `
-  <h1 style="margin-top:200px;">
-  YAYYYYY BBY GIRL M-O-L-U 😭❤️<br><br>
-  I knew you loved me 😌💍<br><br>
-  You are stuck with me forever now.
+  <h1 style="margin-top:120px;">
+  HAPPY VALENTINES MOLU 💖🌸<br><br>
+  You are officially my forever Valentine 💍✨
   </h1>
+
+  <div class="ring">💍</div>
+
+  <h2 style="margin-top:40px; color:#ff0066;">
+  Take a pic and send it to Kuttus 😌💕
+  </h2>
   `;
 }
 
@@ -114,18 +164,29 @@ function moveButton() {
   noButton.style.top = Math.random() * window.innerHeight + "px";
   noButton.style.left = Math.random() * window.innerWidth + "px";
 
-  yesSize += 8;
-  yesButton.style.fontSize = yesSize + "px";
+  yesSize += 0.2;
+  yesButton.style.transform = "rotate(-45deg) scale(" + yesSize + ")";
 
-  if (noCount == 1) question.innerHTML = "Are you serious BBY? 🤨";
-  if (noCount == 2) question.innerHTML = "Don't play with me M-O-L-U 😭";
-  if (noCount == 3) question.innerHTML = "This is getting embarrassing for you 🙃";
-  if (noCount == 4) question.innerHTML = "The Yes button is evolving 💪";
-  if (noCount == 5) question.innerHTML = "Just press Yes BBY GIRL 😌💖";
-  if (noCount > 6) question.innerHTML = "You cannot escape destiny 💍✨";
+  if (noCount == 1) question.innerHTML = "Are you sure Molu? 🥺";
+  if (noCount == 2) question.innerHTML = "Don’t break my heart 😭";
+  if (noCount == 3) question.innerHTML = "The Yes heart is growing stronger 💖";
+  if (noCount > 4) question.innerHTML = "You cannot escape love 💍✨";
 }
+
+// Floating hearts & flowers
+setInterval(() => {
+  let floatItem = document.createElement("div");
+  floatItem.className = "floating";
+  floatItem.innerHTML = Math.random() > 0.5 ? "💖" : "🌸";
+  floatItem.style.left = Math.random() * 100 + "vw";
+  floatItem.style.fontSize = (Math.random() * 20 + 20) + "px";
+  document.body.appendChild(floatItem);
+
+  setTimeout(() => floatItem.remove(), 6000);
+}, 400);
 
 </script>
 
 </body>
 </html>
+
